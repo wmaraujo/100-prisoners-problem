@@ -38,20 +38,24 @@
 
 int main(int argc, char* argv[]) {
     if (argc == 3) {
+        int inputNumSimulations = atoi(argv[1]);
         if (*argv[2] == 's') { // simulate sequentially
-            int sum = simulateAndStats(atoi(argv[1]), "Sequence (Single Thread / Process)");
-            printStats(sum, atoi(argv[1]), "Sequence (Single Thread / Process)");
+            int sum = simulateAndStats(inputNumSimulations, "Sequence (Single Thread / Process)");
+            printStats(sum, inputNumSimulations, "Sequence (Single Thread / Process)");
         }
         else {
             printUsage();
         }
     }
     else if (argc == 4) {
+        int inputNumSimulations = atoi(argv[1]);
         if (*argv[2] == 'p') { // simulate with processes
-            simulateAndStatsWithProcesses(atoi(argv[1]), atoi(argv[3]));
+            int numProcesses = atoi(argv[3]);
+            simulateAndStatsWithProcesses(inputNumSimulations, numProcesses);
         }
         else if (*argv[2] == 't') { // simulate with threads
-            simulateAndStatsWithThreads(atoi(argv[1]),  atoi(argv[3]));
+            int numThreads = atoi(argv[3]);
+            simulateAndStatsWithThreads(inputNumSimulations,  numThreads);
         }
         else {
             printUsage();
