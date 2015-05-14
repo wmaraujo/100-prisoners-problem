@@ -66,7 +66,7 @@ To find the number of simulations to perform in order to obtain the estimated pr
 
 w = z*\(s/sqrt\(n\)\)
 
-Where *w* is the half width \(w = 10^-5\), z is the z score accounting for 95% of the normal distribution, \(z = 1.96\), s is the standard deviation, and n is the number of simulations to perform. Since we know that each simulation returns either 0 or 1, we know that the simulation returns a Bernoulli random variable, and the variance of this random variable is p\*\(1-p\), where p is the success probability, in other words, the ideal probability that all prisoners will find their tag number, and so p is equal to about 0.31182782, and 0.31182782\*\(1-0.31182782\) = 0.21459123, so the variance s^2 = 0.21459123.
+Where *w* is the half width \(w = 10^-4\), z is the z score accounting for 95% of the normal distribution, \(z = 1.96\), s is the standard deviation, and n is the number of simulations to perform. Since we know that each simulation returns either 0 or 1, we know that the simulation returns a Bernoulli random variable, and the variance of this random variable is p\*\(1-p\), where p is the success probability, in other words, the ideal probability that all prisoners will find their tag number, and so p is equal to about 0.31182782, and 0.31182782\*\(1-0.31182782\) = 0.21459123, so the variance s^2 = 0.21459123.
 
 Now to solve the above equation for n:
 
