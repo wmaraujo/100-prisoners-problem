@@ -31,7 +31,7 @@ Each simulation returns either 1 or 0, and so the estimated probability that all
 
 This simulation can only be performed on Mac OSX or Linux operating systems. To compile on Linux, use clang and link the math and thread libraries:
 
-clang 100prisoners.c -o 100prisoners -lm -pthread
+`clang 100prisoners.c -o 100prisoners -lm -pthread`
 
 On Mac OSX, the above may be done without explicitly linking the libraries.
 
@@ -40,11 +40,11 @@ On Mac OSX, the above may be done without explicitly linking the libraries.
 To simulate the problem without threads or processes, in other words, to
 simulate "sequentially", this can be specified as follows:
 
-100prisoners *number-of-times-to-simulate* s
+`100prisoners number-of-times-to-simulate s`
 
 So for example:
 
-100prisoners 1000 s
+`100prisoners 1000 s`
 
 Would simulate the problem 1,000 times, and return the estimated probability that all prisoners found their tag number. The "s" represents "sequential".
 
@@ -52,13 +52,13 @@ Would simulate the problem 1,000 times, and return the estimated probability tha
 
 To simulate using threads so some threads can perform a smaller number of simulation, so the total number of simulations is the sum of all the simulations performed by each thread, try the following:
 
-100prisoners 1000 t 4
+`100prisoners 1000 t 4`
 
 This would create 4 threads, and each thread would simulate 1000/4 = 250 simulations, then once each thread is finished simulating, the total number of successful simulations is summed up and divided by 1000.
 
 To perform the same example as above but using processes instead of threads, type the following:
 
-100prisoners 1000 p 4
+`100prisoners 1000 p 4`
 
 ## Statistics
 
@@ -74,14 +74,13 @@ n = \(z/w\)^2\*s^2
 
 \(1.96/10^-4\)^2\*0.21459123 = 82437366.9168
 
-In other words, it is required to simulate about 83 million simulations to obtain the estimated probability with a half width of 10^-5 and a 95% confidence. Below are the statistics on Mac OSX and Linux for running 83 million simulations:
+In other words, it is required to simulate about 83 million simulations to obtain the estimated probability with a half width of 10^-5 and a 95% confidence. Below are the statistics on Mac OSX and Linux for running 83 million simulations. The multi threaded and multi process simulations run with 4 threads or processes, respectively:
 
 
-Mac OSX
+Mac OSX statistics:
 
-OS X Yosemite \(10.10.3\), Macbook pro
-
-2.4 GHz Intel Core i5
++ OS X Yosemite \(10.10.3\), Macbook pro
++ 2.4 GHz Intel Core i5
 
 |                | Probability Estimate | 95% CI               | Time              |
 |----------------|----------------------|----------------------|-------------------|
@@ -90,11 +89,10 @@ OS X Yosemite \(10.10.3\), Macbook pro
 | Multi-process  | 0.311856             | {0.311756, 0.311955} | 4 min, 20.20 sec  |
 
 
-Linux
+Linux statistics:
 
-Arch Linux \(3.19.2-1-ARCH\), Macbook pro
-
-2.4 GHz Intel Core i5
++ Arch Linux \(3.19.2-1-ARCH\), Macbook pro
++ 2.4 GHz Intel Core i5
 
 |                | Probability Estimate | 95% CI               | Time              |
 |----------------|----------------------|----------------------|-------------------|
@@ -105,11 +103,11 @@ Arch Linux \(3.19.2-1-ARCH\), Macbook pro
 
 The commands used to generate the statistics above were the following:
 
-time ./100prisoners 83000000 s
+`time ./100prisoners 83000000 s`
 
-time ./100prisoners 83000000 t 4
+`time ./100prisoners 83000000 t 4`
 
-time ./100prisoners 83000000 p 4
+`time ./100prisoners 83000000 p 4`
 
 
 It is interesting to note that the threaded simulation on the Mac OSX seems to produce an incorrect estimate, the chances that the 95% confidence interval does not include actual probability (0.31182782) is very very low. I thought this was a bug, so i tried to find a bug, but did not find anything and the linux result seems to give a good estimate, so i tried putting a mutex around the function random(). This solved the problem in the Mac OSX, however it slowed down considerably that it was not worth doing the simulation with a mutex. It took more than 5 min to simulate the 1 million threaded simulation. The number of simulations required based on the constraints above is 83 million, it would take too long.
