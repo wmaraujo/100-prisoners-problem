@@ -7,10 +7,8 @@ The 100 prisoners problem is a problem in probability theory. 100 prisoners are 
 The problem is to find the probability that all 100 prisoners find their tag number.
 To better understand the problem, one can read the article on wikipedia, or watch a youtube video, \(or two\), explaining the problem.
 
-[http://en.wikipedia.org/wiki/100_prisoners_problem](http://en.wikipedia.org/wiki/100_prisoners_problem)
-
-Youtube video 1: [https://www.youtube.com/watch?v=eivGlBKlK6M](https://www.youtube.com/watch?v=eivGlBKlK6M)
-
+[http://en.wikipedia.org/wiki/100_prisoners_problem](http://en.wikipedia.org/wiki/100_prisoners_problem)  
+Youtube video 1: [https://www.youtube.com/watch?v=eivGlBKlK6M](https://www.youtube.com/watch?v=eivGlBKlK6M)  
 Youtube video 2: [https://www.youtube.com/watch?v=C5-I0bAuEUE](https://www.youtube.com/watch?v=C5-I0bAuEUE)
 
 The true probability is about 0.31182782.
@@ -77,10 +75,9 @@ n = \(z/w\)^2\*s^2
 In other words, it is required to simulate about 83 million simulations to obtain the estimated probability with a half width of 10^-5 and a 95% confidence. Below are the statistics on Mac OSX and Linux for running 83 million simulations. The multi threaded and multi process simulations run with 4 threads or processes, respectively:
 
 
-Mac OSX statistics:
-
-+ OS X Yosemite \(10.10.3\), Macbook pro
-+ 2.4 GHz Intel Core i5
+Mac OSX statistics:  
+OS X Yosemite \(10.10.3\), Macbook pro  
+2.4 GHz Intel Core i5
 
 |                | Probability Estimate | 95% CI               | Time              |
 |----------------|----------------------|----------------------|-------------------|
@@ -89,10 +86,9 @@ Mac OSX statistics:
 | Multi-process  | 0.311856             | {0.311756, 0.311955} | 4 min, 20.20 sec  |
 
 
-Linux statistics:
-
-+ Arch Linux \(3.19.2-1-ARCH\), Macbook pro
-+ 2.4 GHz Intel Core i5
+Linux statistics:  
+Arch Linux \(3.19.2-1-ARCH\), Macbook pro  
+2.4 GHz Intel Core i5
 
 |                | Probability Estimate | 95% CI               | Time              |
 |----------------|----------------------|----------------------|-------------------|
@@ -103,10 +99,8 @@ Linux statistics:
 
 The commands used to generate the statistics above were the following:
 
-`time ./100prisoners 83000000 s`
-
-`time ./100prisoners 83000000 t 4`
-
+`time ./100prisoners 83000000 s`  
+`time ./100prisoners 83000000 t 4`  
 `time ./100prisoners 83000000 p 4`
 
 
