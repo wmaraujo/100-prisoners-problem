@@ -72,7 +72,7 @@ n = \(z/w\)^2\*s^2
 
 \(1.96/10^-4\)^2\*0.21459123 = 82437366.9168
 
-In other words, it is required to simulate about 83 million simulations to obtain the estimated probability with a half width of 10^-5 and a 95% confidence. Below are the statistics on Mac OSX and Linux for running 83 million simulations. The multi threaded and multi process simulations run with 4 threads or processes, respectively:
+In other words, it is required to simulate about 83 million simulations to obtain the estimated probability with a half width of 10^-4 and a 95% confidence. Below are the statistics on Mac OSX and Linux for running 83 million simulations. The multi threaded and multi process simulations run with 4 threads or processes, respectively:
 
 
 Mac OSX statistics:  
