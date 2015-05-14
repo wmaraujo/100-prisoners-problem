@@ -52,7 +52,7 @@ To simulate using threads so some threads can perform a smaller number of simula
 
 `100prisoners 1000 t 4`
 
-This would create 4 threads, and each thread would simulate 1000/4 = 250 simulations, then once each thread is finished simulating, the total number of successful simulations is summed up and divided by 1000.
+This would create 4 threads, and each thread would simulate 1000/4 = 250 simulations, then once each thread is finished simulating, the total number of successful simulations is summed up and divided by 1,000.
 
 To perform the same example as above but using processes instead of threads, type the following:
 
@@ -60,17 +60,23 @@ To perform the same example as above but using processes instead of threads, typ
 
 ## Statistics
 
-To find the number of simulations to perform in order to obtain the estimated probability that all 100 prisoners succeed at finding their tag number with 95% confidence and with a half width of 10^-4, \(which will give an estimated accuracy of 4 digits\), we can refer to the confidence interval width formula:
+To find the number of simulations to perform in order to obtain the estimated probability that all 100 prisoners succeed at finding their tag number with 95% confidence and with a half width of $10^{-4}$, \(which will give an estimated accuracy of 4 digits\), we can refer to the confidence interval width formula:
 
-w = z*\(s/sqrt\(n\)\)
+$$
+w = Z_{1-\frac{\alpha}{2}} \cdot \frac{\sigma}{\sqrt{n}}
+$$
 
-Where *w* is the half width \(w = 10^-4\), z is the z score accounting for 95% of the normal distribution, \(z = 1.96\), s is the standard deviation, and n is the number of simulations to perform. Since we know that each simulation returns either 0 or 1, we know that the simulation returns a Bernoulli random variable, and the variance of this random variable is p\*\(1-p\), where p is the success probability, in other words, the ideal probability that all prisoners will find their tag number, and so p is equal to about 0.31182782, and 0.31182782\*\(1-0.31182782\) = 0.21459123, so the variance s^2 = 0.21459123.
+Where $w$ is the half width $(w = 10^{-4})$, $Z_{1-\frac{\alpha}{2}}$ is the Z score accounting for 95% of the normal distribution, $\alpha = 1 - 0.95 = 0.05$, $(Z_{1-\frac{0.05}{2}} = Z_{0.975} = 1.96)$, $\sigma$ is the standard deviation, and $n$ is the number of simulations to perform. Since we know that each simulation returns either 0 or 1, we know that the simulation returns a Bernoulli random variable, and the variance of this random variable is $p \cdot (1-p)$, where $p$ is the success probability, in other words, the ideal probability that all prisoners will find their tag number, and so p is equal to about 0.31182782, and $0.31182782 \cdot (1-0.31182782) = 0.21459123$, so the variance $\sigma^{2} = 0.21459123$.
 
-Now to solve the above equation for n:
+Now to solve the above equation for $n$:
 
-n = \(z/w\)^2\*s^2
+$$
+n = \left( \frac{Z_{1-\frac{\alpha}{2}}}{w} \right)^{2} \cdot \sigma^2
+$$
 
-\(1.96/10^-4\)^2\*0.21459123 = 82437366.9168
+$$
+\left( \frac{1.96}{10^{-4}} \right)^2 \cdot 0.21459123 = 82437366.9168
+$$
 
 In other words, it is required to simulate about 83 million simulations to obtain the estimated probability with a half width of 10^-4 and a 95% confidence. Below are the statistics on Mac OSX and Linux for running 83 million simulations. The multi threaded and multi process simulations run with 4 threads or processes, respectively:
 
