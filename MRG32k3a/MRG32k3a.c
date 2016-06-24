@@ -23,11 +23,23 @@ The seeds for s10, s11, s12 must be integers in [0, m1 - 1] and not all 0.
 The seeds for s20, s21, s22 must be integers in [0, m2 - 1] and not all 0. 
 ***/
 
-#define SEED 12345
+static double s10, s11, s12,
+              s20, s21, s22;
 
-static double s10 = SEED, s11 = SEED, s12 = SEED,
-              s20 = SEED, s21 = SEED, s22 = SEED;
+void mrg_seed(unsigned int s10p, unsigned int s11p, unsigned int s12p,
+              unsigned int s20p, unsigned int s21p, unsigned int s22p) {
 
+    unsigned int lm1 = m1, lm2 = m2;
+
+    // adding 1 to each seed to guarantee all seeds will never be 0
+    s10 = (s10p % lm1)+1; s11 = (s11p % lm1)+1; s12 = (s12p % lm1)+1;
+    s20 = (s20p % lm2)+1; s21 = (s21p % lm2)+1; s22 = (s22p % lm2)+1;
+}
+
+void mrg_seed_array(unsigned int* a) {
+    mrg_seed(a[0], a[1], a[2],
+             a[3], a[4], a[5]);
+}
 
 double MRG32k3a (void)
 {
