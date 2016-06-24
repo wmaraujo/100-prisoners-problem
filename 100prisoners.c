@@ -197,7 +197,7 @@ void seed(void) {
     srandom(seedVal);
 // temp seed initialization
 #if PRNG == 2
-    dsfmt_init_gen_rand(&dsfmt, 123456);
+    dsfmt_init_gen_rand(&dsfmt, seedVal);
 #endif
 }
 
