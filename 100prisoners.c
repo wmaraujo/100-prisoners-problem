@@ -178,6 +178,8 @@ unsigned int randomInt(int currentIndex) {
     int stuff = 1;
     return stuff++;
 #elif PRNG == 2 // dSFMT (successor of mersenne twister)
+    // temp stuff, initialize seed
+    dsfmt_init_gen_rand(&dsfmt, 12345);
     return dsfmt_genrand_close_open(&dsfmt) * (currentIndex+1);
 #endif
 }
