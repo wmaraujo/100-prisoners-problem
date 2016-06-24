@@ -32,9 +32,19 @@
 
 #include "100prisoners.h"
 
+#ifdef PRNG
+#if PRNG == 2
+
+#include "dSFMT/dSFMT.h"
+dsfmt_t dsfmt;
+
+#endif
+#endif
+
 #define DEFAULT_NUM_PRISONERS 100
 #define MAX_TRIALS 50
 #define DEBUG 0
+
 
 int main(int argc, char* argv[]) {
     if (argc == 3) {
@@ -151,8 +161,7 @@ void randomizeArray(int* array, int size) {
     int toSwap;
 
     while (currentIndex > 0) {
-        // need to generate random number from [0, currentIndex], not [0, currentIndex - 1]
-        randomIndex = random() % (currentIndex+1);
+        randomIndex = randomInt(currentIndex);
 
         toSwap = array[randomIndex];
         array[randomIndex] = array[currentIndex];
@@ -160,6 +169,17 @@ void randomizeArray(int* array, int size) {
 
         currentIndex--;
     }
+}
+
+unsigned int randomInt(int currentIndex) {
+#if PRNG == 0 // default c PRNG
+    return random() % (currentIndex+1);
+#elif PRNG == 1 // MRG32k3a PRNG
+    int stuff = 1;
+    return stuff++;
+#elif PRNG == 2 // dSFMT (successor of mersenne twister)
+    return dsfmt_genrand_close_open(&dsfmt) * (currentIndex+1);
+#endif
 }
 
 void seed(void) {
