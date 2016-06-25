@@ -33,18 +33,30 @@
 #include "100prisoners.h"
 
 #ifdef PRNG
-#if PRNG == 2
 
+#if PRNG == 1
+#include "MRG32k3a/MRG32k3a.h"
+#endif
+
+#if PRNG == 2
 #include "dSFMT/dSFMT.h"
 dsfmt_t dsfmt;
-
 #endif
+
 #endif
 
 #define DEFAULT_NUM_PRISONERS 100
 #define MAX_TRIALS 50
 #define DEBUG 0
 
+
+/* ignore enums for now
+enum PRNG_enum {
+    c_random,
+    MRG32k3a,
+    dSFMT
+};
+*/
 
 int main(int argc, char* argv[]) {
     if (argc == 3) {
@@ -175,15 +187,14 @@ unsigned int randomInt(int currentIndex) {
 #if PRNG == 0 // default c PRNG
     return random() % (currentIndex+1);
 #elif PRNG == 1 // MRG32k3a PRNG
-    int stuff = 1;
-    return stuff++;
+    return MRG32k3a() * (currentIndex+1);
 #elif PRNG == 2 // dSFMT (successor of mersenne twister)
     return dsfmt_genrand_close_open(&dsfmt) * (currentIndex+1);
 #endif
 }
 
 void seed(void) {
-    FILE* urandom = fopen("/dev/urandom", "r"); // letting program close file on program completion
+    FILE* urandom = fopen("/dev/urandom", "r");
     if (urandom == NULL) {
         perror("Couldn't open urandom file");
         exit(EXIT_FAILURE);
@@ -194,11 +205,23 @@ void seed(void) {
         perror("Couldn't read urandom file");
         exit(EXIT_FAILURE);
     }
+#if PRNG == 0
     srandom(seedVal);
-// temp seed initialization
-#if PRNG == 2
+#elif PRNG == 1
+    unsigned int seeds[6];
+    seeds[0] = seedVal; // store first rand value at 0
+
+    // store remaining 5 rand values in seeds[1] to seeds[5]
+    if (fread(seeds + 1, sizeof(unsigned int), 5, urandom) == 0) {
+        perror("Couldn't read urandom file for MRG");
+        exit(EXIT_FAILURE);
+    }
+    mrg_seed_array(seeds);
+#elif PRNG == 2
     dsfmt_init_gen_rand(&dsfmt, seedVal);
 #endif
+
+    fclose(urandom);
 }
 
 void simulateAndStatsWithThreads(int n, int numThreads) {
