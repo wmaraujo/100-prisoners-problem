@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Performing simulation of the 100 Prisoners Problem.</title>
+    </head>
+
+    <body>
+        {% if output %}
+        <p>The results are as follows</p>
+        <p>{{ output|safe }}</p>
+        {% endif %}
+
+        {% if not output %}
+        <p>The simulation is currently still being performed.</p>
+
+        <form action="" method="get">
+            <input type="submit" value="Check again">
+        </form>
+        {% endif %}
+    </body>
+</html>
