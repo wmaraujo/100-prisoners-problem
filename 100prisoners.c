@@ -32,6 +32,11 @@
 
 #include "100prisoners.h"
 
+#ifndef UNION
+#define UNION
+#include "union-find/union-find.h"
+#endif
+
 #define DEFAULT_NUM_PRISONERS 100
 #define MAX_TRIALS 50
 #define DEBUG 0
@@ -93,40 +98,9 @@ int simulateAndStats(int n, char* caller) {
 
 enum found_t runSimulation(void) {
     const int num = DEFAULT_NUM_PRISONERS;
-    int prisoners[num];
-    int boxes[num];
 
-    for (int i=0; i<num; i++) {
-        prisoners[i] = i;
-        boxes[i] = i;
-    }
-
-    randomizeArray(boxes, num);
-
-    for (int i=0; i<num; i++) {
-        // if one prisoner does not find his tag, then return NOT_FOUND = 0, since
-        // not all prisoners found their tag.
-        if (lookForTag(prisoners[i], boxes) == NOT_FOUND) {
-            return NOT_FOUND;
-        }
-    }
-    // if all prisoners found their tag, then return FOUND = 1
-    return FOUND;
-}
-
-int lookForTag(int prisonerNum, int boxes[]) {
-    int currentNum = prisonerNum;
-
-    // have the prisoner check each box
-    for (int trials=0; trials<MAX_TRIALS; trials++) {
-        if (prisonerNum == boxes[currentNum]) { // prisoner checks number inside box
-            return FOUND;
-        }
-        else {
-            currentNum = boxes[currentNum]; // use number in box to search for next box
-        }
-    }
-    return NOT_FOUND; // exhausted all 50 boxes
+    set_union s;
+    return randomizeArray(&s, num);
 }
 
 void printStats(int sum, int n, char* caller) {
@@ -145,21 +119,24 @@ void printStats(int sum, int n, char* caller) {
            mean + 1.96*sqrt(var/n));
 }
 
-void randomizeArray(int* array, int size) {
+enum found_t randomizeArray(set_union* s, int size) {
     int currentIndex = size - 1;
     int randomIndex;
-    int toSwap;
 
+    set_union_init(s, DEFAULT_NUM_PRISONERS);
     while (currentIndex > 0) {
         // need to generate random number from [0, currentIndex], not [0, currentIndex - 1]
         randomIndex = random() % (currentIndex+1);
 
-        toSwap = array[randomIndex];
-        array[randomIndex] = array[currentIndex];
-        array[currentIndex] = toSwap;
+        union_set(s, currentIndex, randomIndex);
+        if (s->size[find(s, currentIndex)] > MAX_TRIALS) {
+            return NOT_FOUND;
+        }
 
+        //printf("currentI=%d, rand=%d, s->size[cur]=%d\n", currentIndex, randomIndex, s->size[find(s, currentIndex)]);
         currentIndex--;
     }
+    return FOUND;
 }
 
 void seed(void) {

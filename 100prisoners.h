@@ -1,3 +1,8 @@
+#ifndef UNION
+#define UNION
+#include "union-find/union-find.h"
+#endif
+
 /*
  * Simulates the 100 prisoners problem "n" times using the
  * best strategy and prints the statistics.
@@ -26,21 +31,6 @@ enum found_t {
 enum found_t runSimulation(void);
 
 /*
- * Simulates each prisoner to look for his tag number
- *
- * int prisonerNum is the number of the prisoner looking for his tag number.
- * This prisoner is looking for the number prisonerNum.
- *
- * int boxes[] is the room of uniformly distributed boxes.
- * prisoner #prisonerNum is looking through 50 boxes in boxes[]
- *
- * if prisoner #prisonerNum finds his tag, lookForTag returns 1
- * if the prisoner does not find his tag within 50 trails,
- * lookForTag returns 0
- */
-int lookForTag(int prisonerNum, int boxes[]);
-
-/*
  * Prints the statistics of a simulation that ran "n" times.
  * The statistics include the estimated parameter, variance of the parameter,
  * and a 95% confidence interval.
@@ -67,7 +57,7 @@ void printStats(int sum, int n, char* caller);
  *
  * int size is the size of the array
  */
-void randomizeArray(int* array, int size);
+enum found_t randomizeArray(set_union* s, int size);
 
 /*
  * Seeds the random() function.
