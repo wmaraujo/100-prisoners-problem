@@ -56,6 +56,7 @@ dsfmt_t dsfmt;
 
 #define DEFAULT_NUM_PRISONERS 100
 #define MAX_TRIALS 50
+#define MAX_uint32 ((1UL << (sizeof(unsigned int)*8)) - 1)
 #define DEBUG 0
 
 
@@ -181,7 +182,7 @@ enum found_t single_simulation(set_union* s, int size) {
 
     set_union_init(s, DEFAULT_NUM_PRISONERS);
     while (currentIndex > 0) {
-        randomIndex = random() % (currentIndex+1);
+        randomIndex = randomInt(currentIndex);
 
         union_set(s, currentIndex, randomIndex);
         if (s->size[find(s, currentIndex)] > MAX_TRIALS) {
@@ -217,7 +218,17 @@ unsigned int randomInt(int currentIndex) {
 #elif PRNG == 2 // dSFMT (successor of mersenne twister)
     return dsfmt_genrand_close_open(&dsfmt) * (currentIndex+1);
 #elif PRNG == 3 // Marsa Lfib4 PRNG
-    return Lfib4() % (currentIndex+1);
+    // to removing inherit bias of modulus, uncomment below,
+    // although there isn't much point since one needs to
+    // be performing simulations to obtain 8 digits of
+    // precision or more... (100/((2^32) - 1) ~= 10^-8)
+
+    /*unsigned int randVal = Lfib4();
+    unsigned int modOfMax = MAX_uint32 % (currentIndex+1);
+    while (randVal >= MAX_uint32 - modOfMax) randVal = Lfib4();
+
+    return randVal % (currentIndex+1);*/
+    return Lfib4() % (currentIndex+1); // comment this out if above is uncommented
 #endif
 }
 

@@ -1,3 +1,5 @@
+(this README is not up to date)
+
 # Simulating the 100 prisoners problem
 
 ## Problem definition
