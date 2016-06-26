@@ -93,6 +93,14 @@ enum found_t single_simulation(set_union* s, int size);
 void randomizeArray(int* array, int size);
 
 /*
+ * Specifies the method / PRNG to return a random number
+ *
+ * int currentIndex is used to specify the range of the PRNG, in other words,
+ * the PRNG will return a number in the range [0, currentIndex]
+ */
+unsigned int randomInt(int currentIndex);
+
+/*
  * Seeds the random() function.
  * Using random() instead of rand() for better randomness.
  */
