@@ -28,7 +28,7 @@ enum found_t {
     NOT_FOUND = 0,
     FOUND = 1,
 };
-enum found_t runSimulation(void);
+enum found_t runSimulation(set_union* s);
 
 /*
  * Prints the statistics of a simulation that ran "n" times.

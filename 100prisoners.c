@@ -87,8 +87,9 @@ int simulateAndStats(int n, char* caller) {
     int sum = 0;
 
     seed(); // seed to randomize boxes array in simulation
+    set_union s;
     for (int i=0; i<n; i++) {
-        sum += runSimulation(); // simulation performed here
+        sum += runSimulation(&s); // simulation performed here
     }
 #if DEBUG == 1
     printStats(sum, n, caller);
@@ -96,11 +97,8 @@ int simulateAndStats(int n, char* caller) {
     return sum;
 }
 
-enum found_t runSimulation(void) {
-    const int num = DEFAULT_NUM_PRISONERS;
-
-    set_union s;
-    return randomizeArray(&s, num);
+enum found_t runSimulation(set_union* s) {
+    return randomizeArray(s, DEFAULT_NUM_PRISONERS);
 }
 
 void printStats(int sum, int n, char* caller) {
@@ -125,7 +123,6 @@ enum found_t randomizeArray(set_union* s, int size) {
 
     set_union_init(s, DEFAULT_NUM_PRISONERS);
     while (currentIndex > 0) {
-        // need to generate random number from [0, currentIndex], not [0, currentIndex - 1]
         randomIndex = random() % (currentIndex+1);
 
         union_set(s, currentIndex, randomIndex);
@@ -133,7 +130,6 @@ enum found_t randomizeArray(set_union* s, int size) {
             return NOT_FOUND;
         }
 
-        //printf("currentI=%d, rand=%d, s->size[cur]=%d\n", currentIndex, randomIndex, s->size[find(s, currentIndex)]);
         currentIndex--;
     }
     return FOUND;
