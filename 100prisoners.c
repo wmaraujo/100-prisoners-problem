@@ -43,6 +43,10 @@
 dsfmt_t dsfmt;
 #endif
 
+#if PRNG == 3
+#include "Lfib4/Lfib4.h"
+#endif
+
 #endif
 
 #define DEFAULT_NUM_PRISONERS 100
@@ -190,6 +194,8 @@ unsigned int randomInt(int currentIndex) {
     return MRG32k3a() * (currentIndex+1);
 #elif PRNG == 2 // dSFMT (successor of mersenne twister)
     return dsfmt_genrand_close_open(&dsfmt) * (currentIndex+1);
+#elif PRNG == 3 // Marsa Lfib4 PRNG
+    return Lfib4() % (currentIndex+1);
 #endif
 }
 
@@ -219,6 +225,13 @@ void seed(void) {
     mrg_seed_array(seeds);
 #elif PRNG == 2
     dsfmt_init_gen_rand(&dsfmt, seedVal);
+#elif PRNG == 3
+    unsigned int seeds[1 << 8];
+    if (fread(seeds, sizeof(unsigned int), 1 << 8, urandom) == 0) {
+        perror("Couldn't read urandom file for Lfib4");
+        exit(EXIT_FAILURE);
+    }
+    Lfib4_seed((unsigned char)seedVal, seeds);
 #endif
 
     fclose(urandom);

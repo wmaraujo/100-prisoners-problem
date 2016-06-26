@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "Lfib4.h"
 
 #define ARRAY_SIZE (1 << 8)
 
@@ -14,7 +15,7 @@ void Lfib4_seed(unsigned char seedVal, unsigned int* a) {
     }
 }
 
-unsigned int Lfib4() {
+unsigned int Lfib4(void) {
     t[c]=t[c]+t[(Uc)(c+58)]+t[(Uc)(c+119)]+t[(Uc)(c+179)];
     return t[++c];
 }
