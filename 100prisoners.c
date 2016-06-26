@@ -58,10 +58,6 @@ int main(int argc, char* argv[]) {
             int numProcesses = atoi(argv[3]);
             simulateAndStatsWithProcesses(inputNumSimulations, numProcesses);
         }
-        else if (*argv[2] == 't') { // simulate with threads
-            int numThreads = atoi(argv[3]);
-            simulateAndStatsWithThreads(inputNumSimulations,  numThreads);
-        }
         else {
             printUsage();
         }
@@ -74,12 +70,10 @@ int main(int argc, char* argv[]) {
 
 void printUsage(void) {
     puts("Usage:\n"
-         "\tsimuBestop numSimulations threadOrProcess numThreadOrProcess\n"
-         "\teg. Simulate 1000 with 2 threads\n"
-         "\tsimuBestop 1000 t 2\n"
+         "\tsimuBestop numSimulations processOrNot numProcess\n"
          "\teg. Simulate 1234 with 4 processes\n"
-         "\tsimuBestop 1234 p 3\n"
-         "\teg. Simulate 1234 sequentially\n"
+         "\tsimuBestop 1234 p 4\n"
+         "\teg. Simulate 1234 sequentially (1 process)\n"
          "\tsimuBestop 1234 s");
 }
 
@@ -98,7 +92,45 @@ int simulateAndStats(int n, char* caller) {
 }
 
 enum found_t runSimulation(set_union* s) {
-    return randomizeArray(s, DEFAULT_NUM_PRISONERS);
+    return single_simulation(s, DEFAULT_NUM_PRISONERS);
+}
+
+enum found_t runNaiveSimulation(void) {
+    const int num = DEFAULT_NUM_PRISONERS;
+    int prisoners[num];
+    int boxes[num];
+
+    for (int i=0; i<num; i++) {
+        prisoners[i] = i;
+        boxes[i] = i;
+    }
+
+    randomizeArray(boxes, num);
+
+    for (int i=0; i<num; i++) {
+        // if one prisoner does not find his tag, then return NOT_FOUND = 0, since
+        // not all prisoners found their tag.
+        if (lookForTag(prisoners[i], boxes) == NOT_FOUND) {
+            return NOT_FOUND;
+        }
+    }
+    // if all prisoners found their tag, then return FOUND = 1
+    return FOUND;
+}
+
+int lookForTag(int prisonerNum, int boxes[]) {
+    int currentNum = prisonerNum;
+
+    // have the prisoner check each box
+    for (int trials=0; trials<MAX_TRIALS; trials++) {
+        if (prisonerNum == boxes[currentNum]) { // prisoner checks number inside box
+            return FOUND;
+        }
+        else {
+            currentNum = boxes[currentNum]; // use number in box to search for next box
+        }
+    }
+    return NOT_FOUND; // exhausted all 50 boxes
 }
 
 void printStats(int sum, int n, char* caller) {
@@ -117,7 +149,7 @@ void printStats(int sum, int n, char* caller) {
            mean + 1.96*sqrt(var/n));
 }
 
-enum found_t randomizeArray(set_union* s, int size) {
+enum found_t single_simulation(set_union* s, int size) {
     int currentIndex = size - 1;
     int randomIndex;
 
@@ -135,6 +167,23 @@ enum found_t randomizeArray(set_union* s, int size) {
     return FOUND;
 }
 
+void randomizeArray(int* array, int size) {
+    int currentIndex = size - 1;
+    int randomIndex;
+    int toSwap;
+
+    while (currentIndex > 0) {
+        // need to generate random number from [0, currentIndex], not [0, currentIndex - 1]
+        randomIndex = random() % (currentIndex+1);
+
+        toSwap = array[randomIndex];
+        array[randomIndex] = array[currentIndex];
+        array[currentIndex] = toSwap;
+
+        currentIndex--;
+    }
+}
+
 void seed(void) {
     FILE* urandom = fopen("/dev/urandom", "r"); // letting program close file on program completion
     if (urandom == NULL) {
@@ -148,33 +197,6 @@ void seed(void) {
         exit(EXIT_FAILURE);
     }
     srandom(seedVal);
-}
-
-void simulateAndStatsWithThreads(int n, int numThreads) {
-    pthread_t threads[numThreads];
-    int successes[numThreads]; // array for each thread to store number of successes in simulation
-    struct simParam listOfParam[numThreads];
-
-    // create each thread, setup the thread arguments and call the simulation function
-    for (int i=0; i<numThreads; i++) {
-        listOfParam[i].taskName =       "Thread";
-        listOfParam[i].successes =      successes;
-        listOfParam[i].taskNum =        i;
-        listOfParam[i].numSimulations = n / numThreads;
-        pthread_create(&threads[i], NULL,
-                       (void* (*)(void*)) &splitSimulation,
-                       &listOfParam[i]);
-    }
-    for (int i=0; i<numThreads; i++) {
-        pthread_join(threads[i], NULL); // wait for all threads to finish
-    }
-    int sum = 0;
-    for (int i=0; i<numThreads; i++) {
-        sum += successes[i];
-    }
-
-    int numSimulation = (n / numThreads) * numThreads; // integer division
-    printStats(sum, numSimulation, "All threads");
 }
 
 void simulateAndStatsWithProcesses(int n, int numProcesses) {
